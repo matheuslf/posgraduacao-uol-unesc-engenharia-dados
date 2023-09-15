@@ -1,0 +1,387 @@
+
+SHHIFT + CTRL + K
+
+Declaração SELECT: Consulta simples em tabelas de um banco de dados.
+
+Sintaxe:
+
+SELECT coluna(s) FROM tabela;
+SELECT coluna(s) FROM tabela CONDIÇÕES;
+SELECT coluna(s) FROM tabelas JUNÇÕES;
+
+=========================================
+
+SELECT * from clientes;
+SELECT nome_cliente from clientes;
+SELECT nome_cliente, sobrenome_cliente from clientes;
+SELECT sobrenome_cliente, nome_cliente from clientes;
+
+SELECT nome_produto from produtos;
+SELECT nome_produto, preco from produtos;
+
+SELECT * from pedidos;
+
+=========================================
+
+SELECT *
+FROM clientes
+WHERE cod_cliente = 1;
+
+SELECT *
+FROM clientes
+WHERE cod_cliente = 2;
+
+SELECT *
+FROM clientes
+WHERE cod_cliente = 99;
+
+SELECT nome_produto, qtde_estoque
+FROM produtos
+WHERE qtde_estoque < 10;
+
+SELECT nome_produto, preco
+FROM produtos
+WHERE preco >= 15.00;
+
+SELECT nome_produto, preco
+FROM produtos
+WHERE preco >= 15.00 and qtde_estoque < 10;
+
+SELECT cod_produto, qtde
+FROM pedidos
+WHERE cod_cliente = 1;
+
+========================================
+
+Ordenação de Resultado em Consultas - Cláusula ORDER BY
+
+Sintaxe:
+SELECT colunas
+FROM tabela
+[WHERE condições]
+ORDER BY coluna ASC (MENOR PARA O MAIOR) | DESC (MAIOR PARA MENOR)
+
+
+INSERT INTO produtos (cod_produto, nome_produto, descricao, preco, qtde_estoque)
+values 
+(5, 'Detergente', 'Detergente líquido 500 ml', 1.89, 32),
+(6, 'Leite Integral', 'Leite interal caixa 1 litro', 6.90, 70),
+(7, 'Refrigerante', 'Garra de Refrigerante de 600 ml', 4.10, 14),
+(8, 'Refrigerante', 'Garra de Refrigerante de 1 litro', 50.00, 16),
+(9, 'Refrigerante', 'Lata de 350 ml', 2.99, 45),
+(10, 'Suco Integral', 'Suco Integral Caixa', 7.00, 100);
+
+INSERT INTO produtos (cod_produto, nome_produto, descricao, preco, qtde_estoque)
+values 
+(
+  11, 'Margarina', null, 11.00, 70
+);
+
+
+SELECT * FROM produtos
+ORDER BY nome_produto;
+
+SELECT * FROM produtos
+ORDER BY qtde_estoque desc;
+
+SELECT nome_produto, preco from produtos
+order by nome_produto;
+
+SELECT nome_produto, preco from produtos
+order by nome_produto, preco;
+
+SELECT nome_produto, descricao from produtos
+order by descricao;
+
+SELECT nome_produto, descricao from produtos
+order by descricao NULLS FIRST | LAST;
+
+SELECT nome_produto, preco from produtos
+WHERE preco > 10.00
+order by preco;
+
+===========================================
+
+LIMIT e OFFSET
+
+Permitem obter uma parte especificada das linhas retornadas por uma consulta SQL.
+
+Sintaxe:
+
+SELECT coluna(s)
+FROM tabela
+[ORDER BY COLUNA]
+[LIMIT {contagem | ALL}]
+[OFFSET deslocamanto]
+
+contagem = quantidade de linhas a exibir
+all = mostrar todas as linhas (usar o ALL ou não usar é a mesma coisa)
+deslocamento = a partir de que ponto vai ser aplicado o limit, ou seja, quantas linhas
+deve ser pulada antes de iniciar a contagem do LIMIT.
+
+SELECT * FROM produtos
+order by preco
+LIMIT 4;
+
+-- VISUALIZAR OS 3 PRIMEIROS MAIS CAROS.
+
+SELECT * FROM produtos
+order by preco desc
+LIMIT 3;
+
+-- MAIS EU QUERO O 3, 4 e 5 MAIS CAROS.
+
+SELECT * FROM produtos
+order by preco desc
+LIMIT 3 OFFSET 2; -- Os dois primeiros pula fora
+
+SELECT * FROM produtos
+order by preco desc
+OFFSET 2; -- Pula os dois primeiros
+
+
+===========================================
+
+Operadores de Comparação no PostgreSQL
+
+Comparar dois valores e retornar um valor booleano, dependendo do resultado
+da comparação
+
+< menor que
+> maior que
+<= menor ou igual a
+>= maior ou igual a
+= igual a
+<> ou != diferente de (não igual a)
+
+a = 100
+b = 20
+
+a > b 
+TRUE (Verdadeiro)
+
+
+
+Operador BETWEEN - PostgreSQL
+
+Comparação
+Intervalos de Dados
+
+Sintaxe:
+
+SELECT ...
+FROM ...
+WHERE coluna BETWEEN valor1 and valor 2
+
+SELECT nome_produto, preco
+FROM produtos
+WHERE preco BETWEEN 3.50 and 5.00;
+
+SELECT nome_produto, preco
+FROM produtos
+WHERE preco BETWEEN 3.50 and 5.00 OR
+      preco BETWEEN 10.00 and 20.00;
+
+SELECT nome_produto, preco
+FROM produtos
+WHERE preco BETWEEN 2.00 and 6.00 AND
+      qtde_estoque < 10;
+
+
+===========================================
+
+Cláusula UPDATE - POSTGRESQL
+
+Atualizar registros em tabelas
+
+Sintaxe:
+
+UPDATE tabela
+SET coluna = novo_valor
+WHERE coluna = valor_indice;
+
+UPDATE produtos
+SET descricao = 'Margarina com sal'
+WHERE cod_produto = 11;
+
+UPDATE produtos
+SET qtde_estoque = qtde_estoque - 4;
+WHERE cod_produto = 11;
+
+UPDATE produtos
+SET preco = preco * 1.10;
+
+
+===========================================
+
+Apagar linhas de uma tabela: DELETE FROM e TRUNCATE TABLE
+
+DELETE FROM: excluir linhas específicas de uma tabela
+
+Sintaxe:
+
+DELETE FROM nome_tabela
+WHERE condições;
+
+TRUNCATE TABLE: Limpar os registros de uma tabela
+
+Sintaxe:
+
+TRUNCATE TABLE nome_tabela;
+
+Exemplo: TRUNCATE TABLE pedidos;
+
+===========================================
+
+Funções de Agregação
+
+Computar um valor único a partir de um conjunto de valores de entrada:
+
+Funções Básicas:
+COUNT
+SELECT count(*) from produtos;
+SELECT count(nome_produto) from produtos;
+SELECT count(distinct nome_produto) from produtos;
+SELECT count(*) from produtos where preco >= 10.00;
+
+
+MAX
+MIN
+AVG (Média)
+SELECT AVG(preco) from produtos;
+SELECT ROUND(AVG(preco), 2) from produtos;
+
+SUM
+SELECT SUM(preco), nome_produto FROM produtos; -- ERRO
+
+
+===========================================
+
+Criar Alias com AS
+
+Podemos dar um nome diferente a uma coluna ou tabela ao realizar uma consulta usando
+um Alias.
+
+Sintaxe:
+SELECT coluna1 as alias_coluna1,
+       coluna2 as alias_coluna2
+from tabela as alias_tabela;
+
+
+===========================================
+
+JOINS = Select com junção de tabelas
+
+Clásulas JOIN (junções) são usadas para combinar dados provenientes de duas ou mais tabelas
+em um único conjunto de resultados, baseado em condições de join especificadas.
+
+INNER JOIN ou JOIN = Retorna linhas quando houve pelo menos uma correspondência em ambas as tabelas.
+
+OUTER JOIN = Retorna linhas mesmo quando não houver pelo menos uma correspondencia em uma 
+das tabelas (ou ambas). O OUTER JOIN divide-se em LEFT JOIN, RIGHT JOIN e CROSS JOIN.
+
+
+===========================================
+
+
+VIEWS OU SELECT ?
+
+View (Exibição / Vis]ao) é uma tabela virtual (estrutura de dados) baseada no conjunto de
+resultados de uma consulta SQL, criada a partir de um conjunto de tabelas (ou outras views)
+presentes no banco, que servem com tabelas-base.
+
+Mostra sempre resultados de dados atualizados, pois o motor do banco de dados recria os dados
+toda vez que um usuário consulta a visão
+
+Apicações das Views:
+
+- Simplificar o acesso a dados que stão armazenados em múltiplas tabelas relacionadas.
+- Implementar segurança nos dados de uma tabela, por exemplo, criando uma visão que limite
+os dados que podem ser acessados, por meio de uma cláusula where.
+- Prover isolamento de uma aplicação da estrutura específica de tabelas do banco de dados.
+
+
+SELECT cl.nome_cliente as Cliente, pr.nome_produto as Produto,
+	pe.qtde as quantidade, pe.cod_pedido as pedido,
+	pr.preco * pe.qtde as valor_total
+FROM pedidos PE
+join clientes cl on pe.cod_cliente = cl.cod_cliente
+join produtos pr on pe.cod_produto = pr.cod_produto;
+
+CREATE OR REPLACE VIEW VW_VENDAS AS
+	SELECT cl.nome_cliente as Cliente, pr.nome_produto as Produto,
+		pe.qtde as quantidade, pe.cod_pedido as pedido,
+		pr.preco * pe.qtde as valor_total
+	FROM pedidos PE
+	join clientes cl on pe.cod_cliente = cl.cod_cliente
+	join produtos pr on pe.cod_produto = pr.cod_produto;
+
+
+SELECT Cliente, SUM(valor_total) from vw_vendas
+group by cliente;
+
+
+DROP VIEW VW_VENDAS;
+
+
+CREATE MATERIALIZED VIEW VW_VENDAS AS
+	SELECT cl.nome_cliente as Cliente, pr.nome_produto as Produto,
+		pe.qtde as quantidade, pe.cod_pedido as pedido,
+		pr.preco * pe.qtde as valor_total
+	FROM pedidos PE
+	join clientes cl on pe.cod_cliente = cl.cod_cliente
+	join produtos pr on pe.cod_produto = pr.cod_produto
+	WITH NO DATA;
+
+REFRESH MATERIALIZED VIEW vw_vendas;
+
+select * from vw_vendas;
+
+
+===========================================
+
+SUBCONSULTA
+
+
+Uma subconsulta é uma consulta embutida dentro de outra consulta, de forma aninhada,
+passando os resultados da consulta mais interna para a consulta mais externa por meio de uma
+cláusula where.
+
+Desta forma, é possível restringir mais ainda os dados retornados por uma consulta, permitindo
+a criação de filtros bastante aprimorados. A subconsulta retorna os dados que serão empregados
+pela consulta principal, alimentando-a com informações a serem utilizadas como condições de filtragem.
+
+Podemos utilizar subconsultas não apenas em consultas com a cláusula SELECT, mas também
+em operações INSERT, UPDATE e DELETE.
+
+REGRAS GERAIS PARA APLICAÇÃO DE SUBCONSULTA
+
+- A subconsulta pode ter apenas uma única coluna em sua cláusula SELECT, exceto quando a consulta principal tiver múltiplas colunas para comparação com as colunas selecionadas.
+
+- Se a subconsulta retornar mais de uma linha de dados, é necessário usar operadores de valores múltiplos, como o operador lógico IN
+
+- As subconsultas são escritas dentro de parênteses.
+
+- Não é possível usar a cláusula ORDER BY em uma subconsulta, mas a consulta principal pode.
+
+- É possível usar uma cláusula group by em uma subconsulta
+
+- Não podemos usar o operador BETWEEN com uma subconsulta (na consulta principal), mas podemos usar BETWEEN dentro da subconsulta.
+
+
+-- Todos os produtos que tem pedidos.
+select * from produtos where cod_produto in (select cod_produto from pedidos)
+
+-- Qual o produto tem maior preço.
+select max(preco), nome_produto from produtos group by nome_produto;
+select nome_produto, preco from produtos where preco = (select max(preco) from produtos);
+
+
+SUBSELECT 
+
+SELECT pe.cod_pedido,
+       pe.cod_produto,
+	   p.nome_produto,
+	   (select nome_cliente from clientes c where c.cod_cliente = pe.cod_cliente) as cliente
+FROM PEDIDOS pe
+join produtos p on (pe.cod_produto = p.cod_produto);

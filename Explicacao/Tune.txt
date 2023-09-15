@@ -1,0 +1,112 @@
+TUNNING DO BANCO
+
+shared_buffer
+a. Quantidade de memória dedicada a cache
+b. 15% a 25% do total de RAM
+
+work_mem
+a. Quantidade de memória dedicada a operações como ordenação
+b. 25% do total de RAM / max_connections
+
+maintenance_work_mem 
+a. Quantidade de memódia dedicada a manutenção
+b. 5% do total de RAM
+
+-----------------------------------------------------------
+
+SELECT * FROM clientes
+
+1. REGISTRO
+2. REGISTRO
+3. REGISTRO
+4. REGISTRO
+5. REGISTRO
+6. REGISTRO
+
+------
+
+DELETE FROM clientes where cod_cliente = 2;
+DELETE FROM clientes where cod_cliente = 4;
+
+1. REGISTRO
+2. REGISTRO EXCLUÍDO
+3. REGISTRO
+4. REGISTRO EXCLUÍDO
+5. REGISTRO
+6. REGISTRO
+
+------
+
+SELECT * FROM clientes
+VACUUM;
+
+1. REGISTRO
+
+3. REGISTRO
+
+5. REGISTRO
+6. REGISTRO
+
+------
+
+SELECT * FROM clientes
+VACUUM ANALYSE;
+
+1. REGISTRO
+2. REGISTRO
+3. REGISTRO
+4. REGISTRO
+
+DROP TABLE professor;
+CREATE TABLE professor (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    salario DECIMAL(10, 2)
+);
+
+SELECT COUNT(*) FROM professor;
+
+DO $$
+    DECLARE
+    BEGIN
+        FOR i IN 1..1000000 LOOP
+            INSERT INTO professor (nome, salario) VALUES ('Professor ' || i, random() * 1000 + 1);
+        END LOOP;
+    END;
+$$;
+
+SELECT relname, n_dead_tup FROM pg_stat_user_tables;
+SELECT pg_size_pretty(pg_relation_size('professor'));
+
+UPDATE professor SET salario = salario * 2 WHERE id % 2 = 1; -- Atualiza os salários
+DELETE FROM professor WHERE id % 2 = 0; -- Remove instrutores com id par.
+SELECT relname, n_dead_tup FROM pg_stat_user_tables;
+SELECT pg_size_pretty(pg_relation_size('professor'));
+
+VACUUM ANALYSE professor;
+
+SELECT relname, n_dead_tup FROM pg_stat_user_tables;
+SELECT pg_size_pretty(pg_relation_size('professor'));
+
+VACUUM FULL;
+
+SELECT relname, n_dead_tup FROM pg_stat_user_tables;
+SELECT pg_size_pretty(pg_relation_size('professor'));
+
+------
+
+BACKUP E RESTORE
+
+:: %1 = Local do arquivo
+:: %2 = Nome do banco de dados
+:: %3 = IP de restauração
+
+"C:\Program Files\PostgreSQL\12\bin\pg_dump.exe" -h  %3 -p 5432 -U postgres -F c -b -v -f  %1 %2
+
+:: %1 = Local do arquivo
+:: %2 = Nome do banco de dados
+:: %3 = IP de restauração
+
+"D:\BD\13.4\dropdb.exe"     -h %3 -U postgres %2
+"D:\BD\13.4\createdb.exe"   -E UTF8 -U postgres -h %3 -p 5432 %2
+"D:\BD\13.4\pg_restore.exe" -h %3 -p  5432 -U postgres -d %2 -v %1

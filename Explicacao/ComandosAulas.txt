@@ -1,0 +1,23 @@
+-- SELECT: Consulta simples no banco de dados.
+
+-- Sintaxe:
+
+-- SELECT coluna(s) FROM tabela;
+-- SELECT coluna(s) FROM tabela CONDIÇÕES;
+-- SELECT coluna(s) FROM tabela JUNÇÕES;
+
+SELECT * from clientes;
+SELECT nome_cliente FROM clientes;
+SELECT nome_cliente, sobrenome_cliente FROM clientes;
+SELECT sobrenome_cliente, nome_cliente FROM clientes;
+
+SELECT * FROM produtos;
+SELECT nome_produto, preco FROM produtos;
+
+SELECT * from pedidos;
+
+
+
+
+
+
